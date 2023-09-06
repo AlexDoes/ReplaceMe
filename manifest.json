@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "HBALEX",
+  "version": "1.0",
+  "description": "Replaces 'Alex' with 'Heavenly Beauty' in the browser.",
+  "permissions": ["storage", "declarativeContent", "activeTab", "scripting"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "alex.jpeg",
+      "48": "alex.jpeg",
+      "128": "alex.jpeg"
+    }
+  }
+}
