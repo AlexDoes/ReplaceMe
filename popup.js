@@ -1,21 +1,25 @@
-// popup.js
-
 document.addEventListener("DOMContentLoaded", function () {
   let flag8 = 0;
+
   var replaceButton = document.getElementById("replaceButton");
   replaceButton.addEventListener("click", function (event) {
-    // Prevent the default behavior of the click event
     event.preventDefault();
-    console.log("pretab check");
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      console.log("chrome.tabs.query callback executed");
       if (tabs && tabs.length > 0) {
         var activeTab = tabs[0];
-        console.log("hello");
-        chrome.scripting.executeScript({
-          target: { tabId: activeTab.id },
-          function: replaceText(flag8),
-        });
+        chrome.scripting.executeScript(
+          {
+            target: { tabId: activeTab.id },
+            func: contentScriptFunction, // Pass the function itself, not its invocation
+            args: [flag8], // Pass arguments here
+          },
+          (results) => {
+            // Toggle flag8 for next use
+            if (results && results.length > 0) {
+              flag8 = results[0].result;
+            }
+          }
+        );
       } else {
         console.error("No active tab found.");
       }
@@ -23,9 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-function replaceText(flag8) {
-  console.log(flag8);
-  console.log("hello");
+function contentScriptFunction(flag8) {
   var elements = document.getElementsByTagName("*");
   let searchPattern = /Alex/gi;
   let replacementText = "heavenly beauty";
@@ -34,7 +36,6 @@ function replaceText(flag8) {
     searchPattern = /heavenly beauty/gi;
     replacementText = "Alex";
   }
-  //   console.log(flag);
 
   for (var i = 0; i < elements.length; i++) {
     var element = elements[i];
@@ -52,5 +53,7 @@ function replaceText(flag8) {
       }
     }
   }
-  flag8++;
+
+  // Return the toggled flag value.
+  return 1 - flag8;
 }
